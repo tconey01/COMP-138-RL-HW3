@@ -150,8 +150,12 @@ if __name__ == "__main__":
         mean, std, times = run_trials(f"n={n}", n, max_updates)
         results[n] = (mean, std, times)
 
-    # Plot learning curves with confidence intervals
-    plt.figure(figsize=(12, 8))
+    # Plot learning curves with confidence intervals - SINGLE PLOT
+    plt.figure(figsize=(10, 7), dpi=100)
+    plt.style.use('seaborn-v0_8-whitegrid')
+    ax = plt.gca()
+    ax.set_facecolor('#f8f9fa')
+
     colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
     styles = ['-', '--', ':', '-.']
 
@@ -162,11 +166,16 @@ if __name__ == "__main__":
         plt.plot(times, smoothed, linestyle=styles[idx], color=colors[idx], label=label, linewidth=2.5)
         plt.fill_between(times, smoothed - std, smoothed + std, color=colors[idx], alpha=0.2)
 
-    plt.xlabel("Computation Time (Updates)", fontsize=14)
-    plt.ylabel("Value of Start State (Greedy Policy)", fontsize=14)
-    plt.title("Learning Efficiency by Planning Step Count (Dyna-Q)", fontsize=16)
-    plt.legend(title="Planning Steps", fontsize=12)
+    plt.xlabel("Computation Time (Updates)", fontsize=14, labelpad=16, color='#343a40')
+    plt.ylabel("Value of Start State (Greedy Policy)", fontsize=14, color='#343a40')
+    plt.title("Learning Efficiency by Planning Step Count (Dyna-Q)", 
+            fontsize=16, fontweight='bold', pad=20, color='#343a40')
+
+    plt.legend(title="Planning Steps", loc='lower right', fontsize=12, 
+            frameon=True, fancybox=True, shadow=True)
+
     plt.grid(True, linestyle='--', alpha=0.7)
+    plt.tick_params(colors='#343a40')
     plt.tight_layout()
-    plt.savefig("secondary_experiment_learning_curves.png", dpi=300)
+    plt.savefig("secondary_experiment_learning_curves.png", dpi=300, bbox_inches='tight')
     plt.show()

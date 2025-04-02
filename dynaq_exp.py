@@ -109,19 +109,47 @@ for vals, times in [(vals_b0, times_b0), (vals_b1, times_b1), (vals_b3, times_b3
     vals.insert(0, 0.0)
     times.insert(0, 0)
 
-# Plot learning curves
-plt.figure(figsize=(12, 8))
-plt.style.use('seaborn-v0_8-darkgrid')
+def smooth(data, window=10):
+    """Apply moving average smoothing"""
+    smoothed = []
+    for i in range(len(data)):
+        if i < window:
+            smoothed.append(sum(data[:i+1]) / (i+1))
+        else:
+            smoothed.append(sum(data[i-window+1:i+1]) / window)
+    return smoothed
 
-plt.plot(times_b0, smooth(vals_b0), label="Uniform (b=0)", linewidth=2.5, linestyle='-')
-plt.plot(times_b1, smooth(vals_b1), label="Biased (b=1)", linewidth=2.5, linestyle='--')
-plt.plot(times_b3, smooth(vals_b3), label="Biased (b=3)", linewidth=2.5, linestyle=':')
 
-plt.xlabel("Computation Time (Updates)", fontsize=14)
-plt.ylabel("Value of Start State", fontsize=14)
-plt.title("Effect of Replay Bias in Dyna-Q", fontsize=16)
-plt.legend(fontsize=12)
+plt.figure(figsize=(10, 7), dpi=100)
+
+plt.style.use('seaborn-v0_8-whitegrid')
+ax = plt.gca()
+ax.set_facecolor('#f8f9fa') 
+
+colors = {
+    'b0': '#1f77b4',  
+    'b1': '#ff7f0e', 
+    'b3': '#2ca02c'   
+}
+
+plt.plot(times_b0, smooth(vals_b0), label="Uniform (b=0)", 
+         linewidth=2.5, linestyle='-', color=colors['b0'])
+plt.plot(times_b1, smooth(vals_b1), label="Biased (b=1)", 
+         linewidth=2.5, linestyle='--', color=colors['b1'])
+plt.plot(times_b3, smooth(vals_b3), label="Biased (b=3)", 
+         linewidth=2.5, linestyle=':', color=colors['b3'])
+
+plt.xlabel("Computation Time (Updates)", fontsize=14, labelpad=16, color='#343a40')
+plt.ylabel("Value of Start State", fontsize=14, color='#343a40')
+plt.title("Effect of Replay Bias in Dyna-Q", fontsize=16, fontweight='bold', pad=20, color='#343a40')
+
+plt.legend(loc='lower right', fontsize=12, frameon=True, fancybox=True, shadow=True)
+
 plt.grid(True, linestyle='--', alpha=0.7)
+
+plt.tick_params(colors='#343a40')
+
 plt.tight_layout()
-plt.savefig("dyna_q_replay_bias_comparison.png", dpi=300)
+
+plt.savefig("dyna_q_replay_bias_comparison.png", dpi=300, bbox_inches='tight')
 plt.show()
